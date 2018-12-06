@@ -36,9 +36,7 @@ public class ReflectionUtils {
             return null;
 
         try {
-            Optional<Field> optionalField = getField(obj, fieldName);
-            Field declaredField = optionalField.get(); // not need check isPresent - throw exception
-            declaredField.setAccessible(true);
+            Field declaredField = getFieldAccessible(obj, fieldName);
             return declaredField.get(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -50,13 +48,18 @@ public class ReflectionUtils {
             return;
 
         try {
-            Optional<Field> optionalField = getField(obj, fieldName);
-            Field declaredField = optionalField.get(); // not need check isPresent - throw exception
-            declaredField.setAccessible(true);
+            Field declaredField = getFieldAccessible(obj, fieldName);
             declaredField.set(obj, value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static Field getFieldAccessible(Object obj, String fieldName) {
+        Optional<Field> optionalField = getField(obj, fieldName);
+        Field declaredField = optionalField.get(); // not need check isPresent - throw exception
+        declaredField.setAccessible(true);
+        return declaredField;
     }
 
     public static Object callMethod(Object obj, String methodName) {
