@@ -1,8 +1,8 @@
 package utils;
 
-import data.Base;
-import data.Child;
-import data.ClassWithoutFields;
+import utils.data.Base;
+import utils.data.Child;
+import utils.data.ClassWithoutFields;
 import org.junit.Test;
 
 import java.lang.reflect.Field;

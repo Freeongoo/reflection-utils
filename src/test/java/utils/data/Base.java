@@ -1,4 +1,4 @@
-package data;
+package utils.data;
 
 import java.util.Date;
 import java.util.Objects;
