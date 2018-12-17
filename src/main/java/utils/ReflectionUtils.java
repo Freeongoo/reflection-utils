@@ -1,6 +1,7 @@
 package utils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,8 +39,8 @@ public class ReflectionUtils {
         try {
             Field declaredField = getFieldAccessible(obj, fieldName);
             return declaredField.get(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Cannot get field content for field name: " + fieldName, e);
         }
     }
 
@@ -50,16 +51,19 @@ public class ReflectionUtils {
         try {
             Field declaredField = getFieldAccessible(obj, fieldName);
             declaredField.set(obj, value);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Cannot set field content for field name: " + fieldName, e);
         }
     }
 
     private static Field getFieldAccessible(Object obj, String fieldName) {
         Optional<Field> optionalField = getField(obj, fieldName);
-        Field declaredField = optionalField.get(); // not need check isPresent - throw exception
-        declaredField.setAccessible(true);
-        return declaredField;
+        return optionalField
+                .map(el -> {
+                    el.setAccessible(true);
+                    return el;
+                })
+                .orElseThrow(() -> new IllegalArgumentException("Cannot find field name: " + fieldName));
     }
 
     public static Object callMethod(Object obj, String methodName) {
@@ -70,8 +74,8 @@ public class ReflectionUtils {
             Method method = obj.getClass().getMethod(methodName);
             method.setAccessible(true);
             return method.invoke(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            throw new IllegalArgumentException("Cannot invoke method name: " + methodName, e);
         }
     }
 

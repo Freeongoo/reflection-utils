@@ -112,7 +112,7 @@ public class ReflectionUtilsTest {
         assertThat(nameFieldContentFromParent, equalTo(nameParent));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void getFieldContent_WhenNotExistField() {
         String name = "name";
         Base base = new Base(1L, name, new Date());
@@ -165,7 +165,7 @@ public class ReflectionUtilsTest {
         assertThat(child.getName(), equalTo(myParentName));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void setFieldContent_WhenNotExistField() {
         String myName = "myName";
         Base base = new Base();
@@ -198,7 +198,7 @@ public class ReflectionUtilsTest {
         assertThat(getName, equalTo(name));
     }
 
-    @Test(expected = RuntimeException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void callMethod_WhenNotExistMethod() {
         String name = "name";
         Base base = new Base(1L, name, new Date());
