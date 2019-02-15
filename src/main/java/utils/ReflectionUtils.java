@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class ReflectionUtils {
+public final class ReflectionUtils {
+
+    private ReflectionUtils() { }
 
     private static final String GETTER_PREFIX = "get";
     private static final String SETTER_PREFIX = "set";
