@@ -4,6 +4,7 @@ import utils.data.Base;
 import utils.data.Child;
 import utils.data.ClassWithoutFields;
 import org.junit.Test;
+import utils.data.SomeOther;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -13,6 +14,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
@@ -294,5 +296,62 @@ public class ReflectionUtilsTest {
         Optional<Field> notExist = ReflectionUtils.getField(Base.class, "notExist");
 
         assertThat(notExist.isPresent(), equalTo(false));
+    }
+
+    @Test
+    public void castFieldValue_ToLong_WhenPassedInteger() {
+        int fieldValue = 1;
+        Object idValue = ReflectionUtils.castFieldValue(Base.class, "id", fieldValue);
+        assertThat(idValue, instanceOf(Long.class));
+    }
+
+    @Test
+    public void castFieldValue_ToLong_WhenPassedFloat() {
+        float fieldValue = 1f;
+        Object idValue = ReflectionUtils.castFieldValue(Base.class, "id", fieldValue);
+        assertThat(idValue, instanceOf(Long.class));
+    }
+
+    @Test
+    public void castFieldValue_ToLong_WhenPassedDouble() {
+        double fieldValue = 1.;
+        Object idValue = ReflectionUtils.castFieldValue(Base.class, "id", fieldValue);
+        assertThat(idValue, instanceOf(Long.class));
+    }
+
+    @Test
+    public void castFieldValue_ToLong_WhenPassedStringNumber() {
+        Object idValue = ReflectionUtils.castFieldValue(Base.class, "id", "1");
+        assertThat(idValue, instanceOf(Long.class));
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void castFieldValue_ToLong_WhenPassedStringNumberWithDot() {
+        Object idValue = ReflectionUtils.castFieldValue(Base.class, "id", "1.1");
+        assertThat(idValue, instanceOf(Long.class));
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void castFieldValue_ToLong_WhenPassedStringNumberWithString() {
+        Object idValue = ReflectionUtils.castFieldValue(Base.class, "id", "1abs");
+        assertThat(idValue, instanceOf(Long.class));
+    }
+
+    @Test(expected = NumberFormatException.class)
+    public void castFieldValue_ToLong_WhenPassedStringNumber_ShouldThrowException() {
+        Object idValue = ReflectionUtils.castFieldValue(Base.class, "id", "abs");
+        assertThat(idValue, instanceOf(Long.class));
+    }
+
+    @Test
+    public void castFieldValue_ToDouble_WhenPassedStringNumber() {
+        Object idValue = ReflectionUtils.castFieldValue(SomeOther.class, "someDouble", "1");
+        assertThat(idValue, instanceOf(Double.class));
+    }
+
+    @Test
+    public void castFieldValue_ToDouble_WhenPassedStringNumberWithDot() {
+        Object idValue = ReflectionUtils.castFieldValue(SomeOther.class, "someDouble", "1.1");
+        assertThat(idValue, instanceOf(Double.class));
     }
 }

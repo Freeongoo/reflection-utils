@@ -145,22 +145,37 @@ public class ReflectionUtils {
         Class<?> fieldType = field.getType();
 
         if (fieldType.isAssignableFrom(Double.class)) {
+            if (fieldValue instanceof String) {
+                return Double.valueOf((String)fieldValue);
+            }
             return ((Number) fieldValue).doubleValue();
         }
 
         if (fieldType.isAssignableFrom(Long.class)) {
+            if (fieldValue instanceof String) {
+                return Long.valueOf((String)fieldValue);
+            }
             return ((Number) fieldValue).longValue();
         }
 
         if (fieldType.isAssignableFrom(Float.class)) {
+            if (fieldValue instanceof String) {
+                return Float.valueOf((String)fieldValue);
+            }
             return ((Number) fieldValue).floatValue();
         }
 
         if (fieldType.isAssignableFrom(Integer.class)) {
+            if (fieldValue instanceof String) {
+                return Integer.valueOf((String)fieldValue);
+            }
             return ((Number) fieldValue).intValue();
         }
 
         if (fieldType.isAssignableFrom(Short.class)) {
+            if (fieldValue instanceof String) {
+                return Short.valueOf((String)fieldValue);
+            }
             return ((Number) fieldValue).shortValue();
         }
 
