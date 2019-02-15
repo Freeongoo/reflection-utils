@@ -15,6 +15,8 @@ public class ReflectionUtils {
     private static final String SETTER_PREFIX = "set";
 
     /**
+     * Get name of getter
+     *
      * @param fieldName fieldName
      * @return getter name
      */
@@ -26,6 +28,8 @@ public class ReflectionUtils {
     }
 
     /**
+     * Get name of setter
+     *
      * @param fieldName fieldName
      * @return setter name
      */
@@ -37,6 +41,7 @@ public class ReflectionUtils {
     }
 
     /**
+     * Get the contents of the field with any access modifier
      *
      * @param obj obj
      * @param fieldName fieldName
@@ -55,6 +60,8 @@ public class ReflectionUtils {
     }
 
     /**
+     * Set the contents to the field with any access modifier
+     *
      * @param obj obj
      * @param fieldName fieldName
      * @param value value
@@ -72,6 +79,8 @@ public class ReflectionUtils {
     }
 
     /**
+     * Call a method with any access modifier
+     *
      * @param obj obj
      * @param methodName methodName
      * @return result of method
@@ -90,6 +99,8 @@ public class ReflectionUtils {
     }
 
     /**
+     * Get all fields even from parent
+     *
      * @param clazz clazz
      * @return array of fields
      */
@@ -105,9 +116,11 @@ public class ReflectionUtils {
     }
 
     /**
+     * Get the Field from Object even from parent
+     *
      * @param obj obj
      * @param fieldName fieldName
-     * @return optional field
+     * @return {@code Optional}
      */
     public static Optional<Field> getField(Object obj, String fieldName) {
         if (!isValidParams(obj, fieldName))
@@ -118,9 +131,11 @@ public class ReflectionUtils {
     }
 
     /**
+     * Get the Field from Class even from parent
+     *
      * @param clazz clazz
      * @param fieldName fieldName
-     * @return optional field
+     * @return {@code Optional}
      */
     public static Optional<Field> getField(Class<?> clazz, String fieldName) {
         if (!isValidParams(clazz, fieldName))
@@ -133,10 +148,12 @@ public class ReflectionUtils {
     }
 
     /**
+     * Get the field values with the types already listed according to the field type
+     *
      * @param clazz clazz
      * @param fieldName fieldName
      * @param fieldValue fieldValue
-     * @return field value casting by correct type
+     * @return value cast to specific field type
      */
     public static Object castFieldValue(Class<?> clazz, String fieldName, Object fieldValue) {
         Field field = getField(clazz, fieldName)
