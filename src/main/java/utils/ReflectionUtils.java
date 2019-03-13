@@ -165,11 +165,12 @@ public final class ReflectionUtils {
 
         if (fieldType.isAssignableFrom(Boolean.class)) {
             if (fieldValue instanceof String) {
-                return Boolean.valueOf((String)fieldValue);
+                String trimmedStr = ((String) fieldValue).trim();
+                if (trimmedStr.equals("") || trimmedStr.equals("0") || trimmedStr.toLowerCase().equals("false")) return false;
+                return true;
             }
             if (fieldValue instanceof Number) {
-                String s = String.valueOf(fieldName);
-                return Boolean.valueOf(s);
+                return !(fieldValue).equals(0);
             }
             return fieldValue;
         }
