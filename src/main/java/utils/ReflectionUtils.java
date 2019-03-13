@@ -163,6 +163,17 @@ public final class ReflectionUtils {
 
         Class<?> fieldType = field.getType();
 
+        if (fieldType.isAssignableFrom(Boolean.class)) {
+            if (fieldValue instanceof String) {
+                return Boolean.valueOf((String)fieldValue);
+            }
+            if (fieldValue instanceof Number) {
+                String s = String.valueOf(fieldName);
+                return Boolean.valueOf(s);
+            }
+            return fieldValue;
+        }
+
         if (fieldType.isAssignableFrom(Double.class)) {
             if (fieldValue instanceof String) {
                 return Double.valueOf((String)fieldValue);

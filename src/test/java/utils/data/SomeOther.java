@@ -2,6 +2,7 @@ package utils.data;
 
 public class SomeOther {
     private Double someDouble;
+    private Boolean bool;
 
     public Double getSomeDouble() {
         return someDouble;
@@ -9,5 +10,13 @@ public class SomeOther {
 
     public void setSomeDouble(Double someDouble) {
         this.someDouble = someDouble;
+    }
+
+    public Boolean getBool() {
+        return bool;
+    }
+
+    public void setBool(Boolean bool) {
+        this.bool = bool;
     }
 }

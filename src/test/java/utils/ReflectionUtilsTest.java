@@ -354,4 +354,34 @@ public class ReflectionUtilsTest {
         Object idValue = ReflectionUtils.castFieldValue(SomeOther.class, "someDouble", "1.1");
         assertThat(idValue, instanceOf(Double.class));
     }
+
+    @Test
+    public void castFieldValue_ToBoolean_WhenPassedBool() {
+        Object idValue = ReflectionUtils.castFieldValue(SomeOther.class, "bool", false);
+        assertThat(idValue, instanceOf(Boolean.class));
+    }
+
+    @Test
+    public void castFieldValue_ToBoolean_WhenPassedNumber_Zero() {
+        Object idValue = ReflectionUtils.castFieldValue(SomeOther.class, "bool", 0);
+        assertThat(idValue, instanceOf(Boolean.class));
+    }
+
+    @Test
+    public void castFieldValue_ToBoolean_WhenPassedNumber() {
+        Object idValue = ReflectionUtils.castFieldValue(SomeOther.class, "bool", 0.2);
+        assertThat(idValue, instanceOf(Boolean.class));
+    }
+
+    @Test
+    public void castFieldValue_ToBoolean_WhenPassedString_Zero() {
+        Object idValue = ReflectionUtils.castFieldValue(SomeOther.class, "bool", "0");
+        assertThat(idValue, instanceOf(Boolean.class));
+    }
+
+    @Test
+    public void castFieldValue_ToBoolean_WhenPassedString_One() {
+        Object idValue = ReflectionUtils.castFieldValue(SomeOther.class, "bool", "1");
+        assertThat(idValue, instanceOf(Boolean.class));
+    }
 }
