@@ -150,6 +150,28 @@ public final class ReflectionUtils {
     }
 
     /**
+     * @param clazz clazz
+     * @param fieldName fieldName
+     * @return Class
+     */
+    public static Class<?> getFieldType(Class<?> clazz, String fieldName) {
+        return getFieldWithCheck(clazz, fieldName).getType();
+    }
+
+    /**
+     * @param clazz clazz
+     * @param fieldName fieldName
+     * @return Field
+     */
+    public static Field getFieldWithCheck(Class<?> clazz, String fieldName) {
+        return ReflectionUtils.getField(clazz, fieldName)
+                .orElseThrow(() -> {
+                    String msg = String.format("Cannot find field name: '%s' from class: '%s'", fieldName, clazz);
+                    return new IllegalArgumentException(msg);
+                });
+    }
+
+    /**
      * Get the field values with the types already listed according to the field type
      *
      * @param clazz clazz
@@ -175,35 +197,35 @@ public final class ReflectionUtils {
             return fieldValue;
         }
 
-        if (fieldType.isAssignableFrom(Double.class)) {
+        else if (fieldType.isAssignableFrom(Double.class)) {
             if (fieldValue instanceof String) {
                 return Double.valueOf((String)fieldValue);
             }
             return ((Number) fieldValue).doubleValue();
         }
 
-        if (fieldType.isAssignableFrom(Long.class)) {
+        else if (fieldType.isAssignableFrom(Long.class)) {
             if (fieldValue instanceof String) {
                 return Long.valueOf((String)fieldValue);
             }
             return ((Number) fieldValue).longValue();
         }
 
-        if (fieldType.isAssignableFrom(Float.class)) {
+        else if (fieldType.isAssignableFrom(Float.class)) {
             if (fieldValue instanceof String) {
                 return Float.valueOf((String)fieldValue);
             }
             return ((Number) fieldValue).floatValue();
         }
 
-        if (fieldType.isAssignableFrom(Integer.class)) {
+        else if (fieldType.isAssignableFrom(Integer.class)) {
             if (fieldValue instanceof String) {
                 return Integer.valueOf((String)fieldValue);
             }
             return ((Number) fieldValue).intValue();
         }
 
-        if (fieldType.isAssignableFrom(Short.class)) {
+        else if (fieldType.isAssignableFrom(Short.class)) {
             if (fieldValue instanceof String) {
                 return Short.valueOf((String)fieldValue);
             }
