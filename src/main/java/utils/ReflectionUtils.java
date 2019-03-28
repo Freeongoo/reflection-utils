@@ -242,7 +242,7 @@ public final class ReflectionUtils {
         return fieldValue;
     }
 
-    private static Object convertStringToBoolean(String s) {
+    private static boolean convertStringToBoolean(String s) {
         String trim = s.trim();
         return !trim.equals("") && !trim.equals("0") && !trim.toLowerCase().equals("false");
     }
