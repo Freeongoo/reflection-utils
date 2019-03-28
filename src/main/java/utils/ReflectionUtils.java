@@ -179,17 +179,24 @@ public final class ReflectionUtils {
      * @param fieldValue fieldValue
      * @return value cast to specific field type
      */
-    public static Object castFieldValue(Class<?> clazz, String fieldName, Object fieldValue) {
+    public static Object castFieldValueByClass(Class<?> clazz, String fieldName, Object fieldValue) {
         Field field = getField(clazz, fieldName)
-                .orElseThrow(() -> new IllegalArgumentException("Cannot find field name:" + fieldName));
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Cannot find field by name: '%s'", fieldName)));
 
         Class<?> fieldType = field.getType();
 
+        return castFieldValueByType(fieldType, fieldValue);
+    }
+
+    /**
+     * @param fieldType fieldType
+     * @param fieldValue fieldValue
+     * @return casted value
+     */
+    public static Object castFieldValueByType(Class<?> fieldType, Object fieldValue) {
         if (fieldType.isAssignableFrom(Boolean.class)) {
             if (fieldValue instanceof String) {
-                String trimmedStr = ((String) fieldValue).trim();
-                if (trimmedStr.equals("") || trimmedStr.equals("0") || trimmedStr.toLowerCase().equals("false")) return false;
-                return true;
+                return convertStringToBoolean((String) fieldValue);
             }
             if (fieldValue instanceof Number) {
                 return !(fieldValue).equals(0);
@@ -233,6 +240,11 @@ public final class ReflectionUtils {
         }
 
         return fieldValue;
+    }
+
+    private static Object convertStringToBoolean(String s) {
+        String trim = s.trim();
+        return !trim.equals("") && !trim.equals("0") && !trim.toLowerCase().equals("false");
     }
 
     private static boolean isValidParams(Object obj, String param) {
