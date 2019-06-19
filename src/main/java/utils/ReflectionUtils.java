@@ -1,13 +1,10 @@
 package utils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.lang.reflect.*;
+import java.util.*;
 import java.util.stream.Stream;
+
+import static java.lang.String.format;
 
 public final class ReflectionUtils {
 
@@ -58,6 +55,22 @@ public final class ReflectionUtils {
             return declaredField.get(obj);
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Cannot get field content for field name: " + fieldName, e);
+        }
+    }
+
+    /**
+     * @param clazz clazz
+     * @param fieldName fieldName
+     * @return content static field
+     */
+    public static Object getStaticFieldContent(final Class<?> clazz, final String fieldName) {
+        try {
+            Field field = getFieldWithCheck(clazz, fieldName);
+            field.setAccessible(true);
+            return field.get(clazz);
+        } catch (Exception e) {
+            String exceptionMsg = format("Cannot find or get static field: '%s' from class: '%s'", fieldName, clazz);
+            throw new RuntimeException(exceptionMsg, e);
         }
     }
 
