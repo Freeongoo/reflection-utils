@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 
 public final class ReflectionUtils {
 
@@ -122,7 +123,10 @@ public final class ReflectionUtils {
     public static Field[] getAllFields(Class<?> clazz) {
         if (clazz == null) return null;
 
-        List<Field> fields = new ArrayList<>(Arrays.asList(clazz.getDeclaredFields()));
+        List<Field> fields = Arrays.stream(clazz.getDeclaredFields())
+                .filter(f -> !f.isSynthetic())
+                .collect(toList());
+
         if (clazz.getSuperclass() != null) {
             // danger! Recursion
             fields.addAll(Arrays.asList(getAllFields(clazz.getSuperclass())));
