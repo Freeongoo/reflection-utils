@@ -1,24 +1,52 @@
 package utils;
 
+import org.assertj.core.api.Assertions;
+import org.junit.Test;
 import utils.data.Base;
 import utils.data.Child;
 import utils.data.ClassWithoutFields;
-import org.junit.Test;
 import utils.data.SomeOther;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 public class ReflectionUtilsTest {
+
+    @Test
+    public void getMethod() {
+        Optional<Method> optionalMethod = ReflectionUtils.getMethod(Child.class, "setId");
+        Assertions.assertThat(optionalMethod.isPresent()).isTrue();
+        Method method = optionalMethod.get();
+        Assertions.assertThat(method.getName()).isEqualTo("setId");
+    }
+
+    @Test
+    public void getAllMethodsInHierarchy_WhenCheckExistingParentMethods() {
+        Method[] methods = ReflectionUtils.getAllMethodsInHierarchy(Child.class);
+        List<String> methodName = Arrays.stream(methods)
+                .map(Method::getName)
+                .collect(toList());
+        Assertions.assertThat(methodName).contains("setId");
+        Assertions.assertThat(methodName.size()).isEqualTo(28);
+    }
+
+    @Test
+    public void callMethod_WhenCallSetter() {
+        Child child = new Child();
+        ReflectionUtils.callMethod(child, "setId", 123L);
+        Assertions.assertThat(child.getId()).isEqualTo(123L);
+    }
 
     @Test
     public void getterByFieldName() {
@@ -223,11 +251,11 @@ public class ReflectionUtilsTest {
         Field[] allFields = ReflectionUtils.getAllFields(Base.class);
 
         // expected
-        List<String> expected = Arrays.asList("name", "id", "date");
+        List<String> expected = asList("name", "id", "date");
 
         List<String> listFieldName = Arrays.stream(allFields)
                 .map(Field::getName)
-                .collect(Collectors.toList());
+                .collect(toList());
 
         assertThat(listFieldName, containsInAnyOrder(expected.toArray()));
     }
@@ -237,11 +265,11 @@ public class ReflectionUtilsTest {
         Field[] allFields = ReflectionUtils.getAllFields(Child.class);
 
         // expected
-        List<String> expected = Arrays.asList("name", "id", "date", "chileName", "age");
+        List<String> expected = asList("name", "id", "date", "chileName", "age");
 
         List<String> listFieldName = Arrays.stream(allFields)
                 .map(Field::getName)
-                .collect(Collectors.toList());
+                .collect(toList());
 
         assertThat(listFieldName, containsInAnyOrder(expected.toArray()));
     }

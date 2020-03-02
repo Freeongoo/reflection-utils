@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 
 public final class ReflectionUtils {
@@ -100,13 +101,15 @@ public final class ReflectionUtils {
      * @param obj obj
      * @param methodName methodName
      * @return result of method
+     * @throws IllegalArgumentException if not exist methodName
      */
     public static Object callMethod(Object obj, String methodName, Object...params) {
         if (!isValidParams(obj, methodName))
             return null;
 
         try {
-            Method method = getMethod(obj.getClass(), methodName);
+            Method method = getMethod(obj.getClass(), methodName)
+                    .orElseThrow(() -> new IllegalArgumentException(String.format("Cannot find method name: '%s'", methodName)));
             method.setAccessible(true);
             return method.invoke(obj, params);
         } catch (Exception e) {
@@ -114,6 +117,12 @@ public final class ReflectionUtils {
         }
     }
 
+    /**
+     * Get all methods from all hierarchy
+     *
+     * @param objectClass objectClass
+     * @return array of methods
+     */
     public static Method[] getAllMethodsInHierarchy(Class<?> objectClass) {
         Set<Method> allMethods = new HashSet<>();
         Method[] declaredMethods = objectClass.getDeclaredMethods();
@@ -121,20 +130,22 @@ public final class ReflectionUtils {
         if (objectClass.getSuperclass() != null) {
             Class<?> superClass = objectClass.getSuperclass();
             Method[] superClassMethods = getAllMethodsInHierarchy(superClass);
-            allMethods.addAll(Arrays.asList(superClassMethods));
+            allMethods.addAll(asList(superClassMethods));
         }
-        allMethods.addAll(Arrays.asList(declaredMethods));
-        allMethods.addAll(Arrays.asList(methods));
-        return allMethods.toArray(new Method[allMethods.size()]);
+        allMethods.addAll(asList(declaredMethods));
+        allMethods.addAll(asList(methods));
+        return allMethods.toArray(new Method[0]);
     }
 
-    public static Method getMethod(Class<?> clazz, String name) {
-        Method[] allMethodsInHierarchy = getAllMethodsInHierarchy(clazz);
-        for (Method method: allMethodsInHierarchy) {
-            if (!method.getName().equals(name)) continue;
-            return method;
-        }
-        throw new IllegalArgumentException("Cannot find method: " + name);
+    /**
+     * @param clazz clazz
+     * @param name name
+     * @return optional Method
+     */
+    public static Optional<Method> getMethod(Class<?> clazz, String name) {
+        return Arrays.stream(getAllMethodsInHierarchy(clazz))
+                .filter(m -> m.getName().equals(name))
+                .findFirst();
     }
 
     /**
@@ -152,7 +163,7 @@ public final class ReflectionUtils {
 
         if (clazz.getSuperclass() != null) {
             // danger! Recursion
-            fields.addAll(Arrays.asList(getAllFields(clazz.getSuperclass())));
+            fields.addAll(asList(getAllFields(clazz.getSuperclass())));
         }
         return fields.toArray(new Field[] {});
     }
