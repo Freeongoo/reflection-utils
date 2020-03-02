@@ -101,17 +101,40 @@ public final class ReflectionUtils {
      * @param methodName methodName
      * @return result of method
      */
-    public static Object callMethod(Object obj, String methodName) {
+    public static Object callMethod(Object obj, String methodName, Object...params) {
         if (!isValidParams(obj, methodName))
             return null;
 
         try {
-            Method method = obj.getClass().getMethod(methodName);
+            Method method = getMethod(obj.getClass(), methodName);
             method.setAccessible(true);
-            return method.invoke(obj);
-        } catch (NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new IllegalArgumentException("Cannot invoke method name: " + methodName, e);
+            return method.invoke(obj, params);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e);
         }
+    }
+
+    public static Method[] getAllMethodsInHierarchy(Class<?> objectClass) {
+        Set<Method> allMethods = new HashSet<>();
+        Method[] declaredMethods = objectClass.getDeclaredMethods();
+        Method[] methods = objectClass.getMethods();
+        if (objectClass.getSuperclass() != null) {
+            Class<?> superClass = objectClass.getSuperclass();
+            Method[] superClassMethods = getAllMethodsInHierarchy(superClass);
+            allMethods.addAll(Arrays.asList(superClassMethods));
+        }
+        allMethods.addAll(Arrays.asList(declaredMethods));
+        allMethods.addAll(Arrays.asList(methods));
+        return allMethods.toArray(new Method[allMethods.size()]);
+    }
+
+    public static Method getMethod(Class<?> clazz, String name) {
+        Method[] allMethodsInHierarchy = getAllMethodsInHierarchy(clazz);
+        for (Method method: allMethodsInHierarchy) {
+            if (!method.getName().equals(name)) continue;
+            return method;
+        }
+        throw new IllegalArgumentException("Cannot find method: " + name);
     }
 
     /**
