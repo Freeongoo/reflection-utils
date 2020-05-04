@@ -16,6 +16,19 @@ public final class ReflectionUtils {
     private static final String SETTER_PREFIX = "set";
 
     /**
+     * @param object object
+     * @return map
+     */
+    public static Map<String, Object> getMapFieldNameAndValue(Object object) {
+        Field[] fields = getAllFields(object.getClass());
+        Map<String, Object> map = new HashMap<>();
+        for (Field field : fields) {
+            map.put(field.getName(), getFieldContent(object, field.getName()));
+        }
+        return map;
+    }
+
+    /**
      * Get name of getter
      *
      * @param fieldName fieldName
@@ -150,6 +163,7 @@ public final class ReflectionUtils {
 
     /**
      * Get all fields even from parent
+     * Important! With static fields, but without synthetic fields
      *
      * @param clazz clazz
      * @return array of fields

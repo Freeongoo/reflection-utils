@@ -2,17 +2,11 @@ package utils;
 
 import org.assertj.core.api.Assertions;
 import org.junit.Test;
-import utils.data.Base;
-import utils.data.Child;
-import utils.data.ClassWithoutFields;
-import utils.data.SomeOther;
+import utils.data.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
@@ -22,6 +16,32 @@ import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.assertThat;
 
 public class ReflectionUtilsTest {
+
+    @Test
+    public void getMapFieldNameAndValue_WhenExistFieldContent() {
+        TestClass testClass = new TestClass();
+        testClass.setName("nameName");
+        testClass.setList(asList("one", "two"));
+        Map<String, Object> map = ReflectionUtils.getMapFieldNameAndValue(testClass);
+
+        HashMap<String, Object> mapExpected = new HashMap<>();
+        mapExpected.put("name", "nameName");
+        mapExpected.put("list", asList("one", "two"));
+
+        Assertions.assertThat(map).isEqualTo(mapExpected);
+    }
+
+    @Test
+    public void getMapFieldNameAndValue_WhenNullFieldContent() {
+        TestClass testClass = new TestClass();
+        Map<String, Object> map = ReflectionUtils.getMapFieldNameAndValue(testClass);
+
+        HashMap<String, Object> mapExpected = new HashMap<>();
+        mapExpected.put("name", null);
+        mapExpected.put("list", null);
+
+        Assertions.assertThat(map).isEqualTo(mapExpected);
+    }
 
     @Test
     public void getMethod() {
@@ -247,6 +267,20 @@ public class ReflectionUtilsTest {
     }
 
     @Test
+    public void getAllFields_WheExistStaticField() {
+        Field[] allFields = ReflectionUtils.getAllFields(ObjWithStatic.class);
+
+        // expected
+        List<String> expected = asList("id", "PREFIX");
+
+        List<String> listFieldName = Arrays.stream(allFields)
+                .map(Field::getName)
+                .collect(toList());
+
+        assertThat(listFieldName, containsInAnyOrder(expected.toArray()));
+    }
+
+    @Test
     public void getAllFields_WhenNotInheritance() {
         Field[] allFields = ReflectionUtils.getAllFields(Base.class);
 
@@ -411,5 +445,26 @@ public class ReflectionUtilsTest {
     public void castFieldValue_ToBoolean_WhenPassedString_One() {
         Object idValue = ReflectionUtils.castFieldValueByClass(SomeOther.class, "bool", "1");
         assertThat(idValue, instanceOf(Boolean.class));
+    }
+
+    public static class TestClass {
+        String name;
+        List<String> list;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public List<String> getList() {
+            return list;
+        }
+
+        public void setList(List<String> list) {
+            this.list = list;
+        }
     }
 }
